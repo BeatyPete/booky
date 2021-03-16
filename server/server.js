@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3001;
 const server = new ApolloServer({ 
   typeDefs, 
   resolvers, 
-  /* context: authMiddleware */
+  context: authMiddleware
 });
 
 server.applyMiddleware({ app });
@@ -25,9 +25,9 @@ app.use(express.json());
 } */
 
 /* app.use(routes); */
-/* app.get('*', (req, res) => {
+app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/build/index.html'));
-}); */
+});
 
 db.once('open', () => {
   app.listen(PORT, () => {

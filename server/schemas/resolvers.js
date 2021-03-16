@@ -46,31 +46,30 @@ const resolvers = {
       return { token, user };
     },
     saveBook: async (parent, {bookId, authors, description, title, image, link}, context) => {
-      /* if (context.user) { */
-        console.log(authors)
+      if (context.user) {
         const updatedUser = await User.findOneAndUpdate(
-          { _id: /* context.user._id */ "604ef7330cbe233330401437" },
+          { _id: context.user._id },
           { $push: { savedBooks: { bookId: bookId, authors: authors, description: description, title: title, image: image, link: link  } } },
           { new: true, runValidators: true }
         );
 
         return updatedUser;
-      /* }
+      }
 
-      throw new AuthenticationError('You need to be logged in!'); */
+      throw new AuthenticationError('You need to be logged in!');
     },
     removeBook: async (parent, {bookId}, context) => {
-      /* if (context.user) { */
+      if (context.user) {
         const updatedUser = await User.findOneAndUpdate(
-          { _id: /* context.user._id */ "604ef7330cbe233330401437" },
+          { _id: context.user._id },
           { $pull: { savedBooks: { bookId: bookId} } },
           { new: true }
         );
 
         return updatedUser;
-      /* }
+      }
 
-      throw new AuthenticationError('You need to be logged in!'); */
+      throw new AuthenticationError('You need to be logged in!');
     }
   }
 };
