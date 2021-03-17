@@ -9,39 +9,35 @@ import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
 
 const SavedBooks = () => {
-  /* const [userData, setUserData] = useState({}); */
 
   // use this to determine if `useEffect()` hook needs to run again
-  /* const userDataLength = Object.keys(userData).length;
+  /* const userDataLength = Object.keys(userData).length; */
 
-  useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const token = Auth.loggedIn() ? Auth.getToken() : null;
-
-        if (!token) {
-          return false;
-        }
-
-        const response = await getMe(token);
-
-        if (!response.ok) {
-          throw new Error('something went wrong!');
-        }
-
-        const user = await response.json();
-        setUserData(user);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    getUserData();
-  }, [userDataLength]); */
-
+ /* const [removeBook] = useMutation(REMOVE_BOOK); */
   const { loading, data } = useQuery(GET_ME);
   console.log(data?.me)
   const userData = data?.me
+  
+  const [removeBook, { error }] = useMutation(REMOVE_BOOK, {
+    update(cache, { data: { removeBook } }) {
+      /* try {
+        const { books } = cache.readQuery({ query: GET_ME });
+        cache.writeQuery({
+          query: GET_ME,
+          data: { books: [removeBook, ...books] }
+        });
+      } catch (e) {
+        console.error(e);
+      } */
+
+      // update me object's cache
+      const { me } = cache.readQuery({ query: GET_ME });
+      cache.writeQuery({
+        query: GET_ME,
+        data: { me: { ...me, savedBooks: [...me.savedBooks, removeBook] } }
+      });
+    }
+  });
 
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
   const handleDeleteBook = async (bookId) => {
@@ -62,9 +58,17 @@ const SavedBooks = () => {
       setUserData(updatedUser);
       // upon success, remove book's id from localStorage
       removeBookId(bookId);
+    }  */
+    
+    try {
+      await removeBook({
+        variables: { bookId: bookId }
+      });
+      removeBookId(bookId);
     } catch (err) {
       console.error(err);
-    } */
+    } 
+
   };
 
   // if data isn't here yet, say so
